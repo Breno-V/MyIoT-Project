@@ -5,6 +5,7 @@ import { Gauges } from './src/components/Gauges';
 import { LightControl } from './src/components/LightControl';
 import { StatusModal } from './src/components/StatusModal';
 import mqttService from './src/services/mqttService';
+import styles from './src/styles/App.styles';
 
 const mqtt = new mqttService();
 
@@ -16,12 +17,12 @@ export default function App() {
   const [hum, setHum] = useState(0);
 
   const mqttConfig = {
-    host: process.env.MQTT_HOST,
-    port: parseInt(process.env.MQTT_PORT),
-    path: process.env.MQTT_PATH,
-    user: process.env.MQTT_USER,
-    pass: process.env.MQTT_PASS,
-    clientId: 'RN_App_' + Math.random(),
+    host: process.env.EXPO_PUBLIC_MQTT_HOST,
+    port: parseInt(process.env.EXPO_PUBLIC_MQTT_PORT),
+    path: process.env.EXPO_PUBLIC_MQTT_PATH || '',
+    user: process.env.EXPO_PUBLIC_MQTT_USER,
+    pass: process.env.EXPO_PUBLIC_MQTT_PASS,
+    clientId: 'RN_App_' + Math.random(),  
   };
 
   useEffect(() => {
@@ -30,20 +31,25 @@ export default function App() {
 
   const startConnection = () => {
     setShowError(false);
+    console.log('Iniciando conexão MQTT com config:', mqttConfig);
+
     mqtt.connect(
       mqttConfig,
       (topic, message) => {
+        console.log('MQTT MESSAGE', topic, message);
         if (topic === 'casa/temp') setTemp(parseFloat(message));
         if (topic === 'casa/hum') setHum(parseFloat(message));
         if (topic === 'casa/luz') setIsLightOn(message === '1');
       },
       () => {
         setIsConnected(true);
+        console.log('MQTT CONNECTED');
         mqtt.subscribe('casa/temp');
         mqtt.subscribe('casa/hum');
         mqtt.subscribe('casa/luz');
       },
       (err) => {
+        console.log('MQTT CONNECT ERROR', err);
         setIsConnected(false);
         setShowError(true);
       }
@@ -59,7 +65,7 @@ export default function App() {
       <Text style={styles.header}> Smart Home IoT</Text>
 
       <LightControl
-        isOn={isLightOn}
+        isLightOn={isLightOn}
         onToggle={toggleLight}
       />
 
@@ -76,12 +82,3 @@ export default function App() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
