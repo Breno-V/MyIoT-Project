@@ -31,25 +31,21 @@ export default function App() {
 
   const startConnection = () => {
     setShowError(false);
-    console.log('Iniciando conexão MQTT com config:', mqttConfig);
 
     mqtt.connect(
       mqttConfig,
       (topic, message) => {
-        console.log('MQTT MESSAGE', topic, message);
         if (topic === 'casa/temp') setTemp(parseFloat(message));
         if (topic === 'casa/hum') setHum(parseFloat(message));
         if (topic === 'casa/luz') setIsLightOn(message === '1');
       },
       () => {
         setIsConnected(true);
-        console.log('MQTT CONNECTED');
         mqtt.subscribe('casa/temp');
         mqtt.subscribe('casa/hum');
         mqtt.subscribe('casa/luz');
       },
       (err) => {
-        console.log('MQTT CONNECT ERROR', err);
         setIsConnected(false);
         setShowError(true);
       }
