@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native';
-import { MaterialCommunityIcons as Icon } from 'react-native-vector-icons/MaterialCommunityIcons';
-import stylees from '../styles/LightControl.styles';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
+import styles from '../styles/LightControl.styles';
 
 export const LightControl = ({ isLightOn, onToggle }) => {
     return (

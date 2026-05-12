@@ -1,5 +1,6 @@
 import { View, Text } from 'react-native';
 import CircularProgress from 'react-native-circular-progress-indicator';
+import styles from '../styles/Gauges.styles';
 
 export const Gauges = ({ temp, hum }) => {
     return (
