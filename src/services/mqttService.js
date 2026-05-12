@@ -26,7 +26,7 @@ export default class MQTTService {
             userName: user,
             password: pass,
             useSSL: true,
-            onSucces: onConnect,
+            onSuccess: onConnect,
             onFailure: onFailure,
             timeout: 3,
             keepAliveInterval: 60,
