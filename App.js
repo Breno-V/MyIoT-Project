@@ -20,7 +20,7 @@ export default function App() {
     host: process.env.EXPO_PUBLIC_MQTT_HOST,
     port: parseInt(process.env.EXPO_PUBLIC_MQTT_PORT),
     path: process.env.EXPO_PUBLIC_MQTT_PATH || '',
-    user: process.env.EXPO_PUBLIC_MQTT_USER,
+    user: process.env.EXPO_PUBLIC_MQTT_USERNAME,
     pass: process.env.EXPO_PUBLIC_MQTT_PASS,
     clientId: 'RN_App_' + Math.random(),  
   };
