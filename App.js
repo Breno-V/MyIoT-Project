@@ -4,13 +4,17 @@ import { useState, useEffect, useRef } from 'react';
 import { Gauges } from './src/components/Gauges';
 import { LightControl } from './src/components/LightControl';
 import { StatusModal } from './src/components/StatusModal';
+import { HistoryButton } from './src/components/HistoryButton';
+import { HistoryModal } from './src/components/HistoryModal';
 import mqttService from './src/services/mqttService';
 import styles from './src/styles/App.styles';
 
 const mqtt = new mqttService();
 
 export default function App() {
+  const [lastTimestamp, setLastTimestamp] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [showError, setShowError] = useState(false);
   const [isLightOn, setIsLightOn] = useState(false);
   const [temp, setTemp] = useState(0);
@@ -20,12 +24,11 @@ export default function App() {
   const lastHumRef = useRef(0);
   const lastLightRef = useRef(null);
   const lastSentRef = useRef(null);
-  
-  
+
   const mqttConfig = {
     host: process.env.EXPO_PUBLIC_MQTT_HOST,
     port: parseInt(process.env.EXPO_PUBLIC_MQTT_PORT),
-    path: process.env.EXPO_PUBLIC_MQTT_PATH || '',
+    path: process.env.EXPO_PUBLIC_MQTT_PATH,
     user: process.env.EXPO_PUBLIC_MQTT_USERNAME,
     pass: process.env.EXPO_PUBLIC_MQTT_PASS,
     clientId: 'RN_App_' + Math.random(),  
@@ -44,15 +47,19 @@ export default function App() {
         if (topic === 'casa/temp') {
           lastTempRef.current = parseFloat(message);
           setTemp(parseFloat(message));
+          setLastTimestamp(new Date());
         }
           
         if (topic === 'casa/hum') {
           lastHumRef.current = parseFloat(message);
           setHum(parseFloat(message));
+          setLastTimestamp(new Date());
         }
+
         if (topic === 'casa/luz') {
           lastLightRef.current = message;
           setIsLightOn(message === '1');
+          setLastTimestamp(new Date());
         }
       },
       () => {
@@ -92,6 +99,18 @@ export default function App() {
         onRetry={startConnection}
         onLater={() => setShowError(false)}
       />
+
+      <HistoryButton onPress={() => setShowHistory(true)} />
+
+      <HistoryModal
+        visible={showHistory}
+        onClose={() => setShowHistory(false)}
+        temp={lastTempRef.current}
+        hum={lastHumRef.current}
+        light={lastLightRef.current}
+        timestamp={lastTimestamp}
+      />
+
     </View>
   );
 }
