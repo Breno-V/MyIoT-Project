@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Gauges } from './src/components/Gauges';
 import { LightControl } from './src/components/LightControl';
 import { StatusModal } from './src/components/StatusModal';
@@ -16,6 +16,12 @@ export default function App() {
   const [temp, setTemp] = useState(0);
   const [hum, setHum] = useState(0);
 
+  const lastTempRef = useRef(0);
+  const lastHumRef = useRef(0);
+  const lastLightRef = useRef(null);
+  const lastSentRef = useRef(null);
+  
+  
   const mqttConfig = {
     host: process.env.EXPO_PUBLIC_MQTT_HOST,
     port: parseInt(process.env.EXPO_PUBLIC_MQTT_PORT),
@@ -35,9 +41,19 @@ export default function App() {
     mqtt.connect(
       mqttConfig,
       (topic, message) => {
-        if (topic === 'casa/temp') setTemp(parseFloat(message));
-        if (topic === 'casa/hum') setHum(parseFloat(message));
-        if (topic === 'casa/luz') setIsLightOn(message === '1');
+        if (topic === 'casa/temp') {
+          lastTempRef.current = parseFloat(message);
+          setTemp(parseFloat(message));
+        }
+          
+        if (topic === 'casa/hum') {
+          lastHumRef.current = parseFloat(message);
+          setHum(parseFloat(message));
+        }
+        if (topic === 'casa/luz') {
+          lastLightRef.current = message;
+          setIsLightOn(message === '1');
+        }
       },
       () => {
         setIsConnected(true);
@@ -54,6 +70,7 @@ export default function App() {
 
   const toggleLight = () => {
     const newState = isLightOn ? '0' : '1';
+    lastSentRef.current = newState;
     mqtt.publish('casa/luz', newState);
   }
   return (
