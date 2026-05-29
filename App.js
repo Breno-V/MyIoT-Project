@@ -1,6 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, View } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
+//useRef para armazenar os últimos valores recebidos e enviados
+//useState para controlar o estado da conexão, dos dados e dos modais
+//useEffect para carregar os dados salvos e iniciar a conexão MQTT ao montar o componente
 import { Gauges } from './src/components/Gauges';
 import { LightControl } from './src/components/LightControl';
 import { StatusModal } from './src/components/StatusModal';
@@ -74,7 +77,6 @@ export default function App() {
   };
 
   const saveHistory = async (newItem) => {
-    console.log('saveHistory chamado');
     currentHistory = [newItem, ...currentHistory];
     setHistory([...currentHistory]);
     await AsyncStorage.setItem('history', JSON.stringify(currentHistory));
@@ -86,7 +88,6 @@ export default function App() {
     mqtt.connect(
       mqttConfig,
       (topic, message) => {
-        console.log('refs:', lastTempRef.current, lastHumRef.current, lastLightRef.current);
         const now = new Date();
 
         if (topic === 'casa/temp') {

@@ -4,6 +4,7 @@ import { useRef, useEffect } from 'react';
 import styles from '../styles/HistoryModal.styles';
 
 export const HistoryModal = ({ visible, onClose, history = [] }) => {
+    //translateY é a posição vertical do sheet, começa fora da tela (800) e é animada para 0 quando o modal abre
     const translateY = useRef(new Animated.Value(800)).current;
 
     const panResponder = useRef(PanResponder.create({
