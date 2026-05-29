@@ -1,59 +1,124 @@
-import { Text, View, Modal, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, FlatList, Modal, PanResponder, Animated } from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
+import { useRef, useEffect } from 'react';
 import styles from '../styles/HistoryModal.styles';
 
-export const HistoryModal = ({ visible, onClose, temp, hum, light, timestamp }) => {
-    const hasData = temp || hum || light;
+export const HistoryModal = ({ visible, onClose, history = [] }) => {
+    const translateY = useRef(new Animated.Value(800)).current;
+
+    const panResponder = useRef(PanResponder.create({
+        //retorna true para dizer ao pan que ele ira monitorar o gesto
+        onStartShouldSetPanResponder: () => true,
+        // enquanto o dedo está se movendo, atualiza a posição do sheet.
+        onPanResponderMove: (e, gesture) => {
+            if (gesture.dy > 0) {
+                translateY.setValue(gesture.dy);
+            }
+        },
+        //quando o dedo solta, decide o que fazer:
+        //(o primeiro parametro nao é usado pois nao tem o que ser feito com ele)
+        onPanResponderRelease: (e, gesture) => {
+            if (gesture.dy > 100) {
+                //anima o sheet para baixo e depois chama onClose para fechar o modal
+                Animated.timing(translateY, {
+                    toValue: 800,
+                    duration: 300,
+                    useNativeDriver: true,
+                }).start(() => onClose());
+            } else {
+                //anima o sheet de volta para a posição original
+                Animated.spring(translateY, {
+                    toValue: 0,
+                    useNativeDriver: true,
+                }).start();
+            }
+        },
+    })).current;
+
+    useEffect(() => {
+        if (visible) {
+            translateY.setValue(800);
+            Animated.spring(translateY, {
+                toValue: 0,
+                useNativeDriver: true,
+            }).start();
+        }
+    }, [visible]);
+
+    const renderItem = ({ item, index }) => {
+        const timestamp = new Date(item.timestamp);
+
+        return (
+            <View style={styles.card}>
+                <View style={styles.row}>
+                    <Icon name="clock-outline" size={16} color="#888" />
+                    <Text style={styles.timestamp}>
+                        {timestamp.toLocaleString('pt-BR')}
+                    </Text>
+                    {index === 0 && (
+                        <View style={styles.badge}>
+                            <Text style={styles.badgeText}>Mais recente</Text>
+                        </View>
+                    )}
+                </View>
+
+                <View style={styles.row}>
+                    <Icon name="thermometer" size={16} color="#FF6B6B" />
+                    <Text style={styles.valueTemp}>Temperatura: {item.temp}°C</Text>
+                </View>
+
+                <View style={styles.row}>
+                    <Icon name="water-percent" size={16} color="#4ECDC4" />
+                    <Text style={styles.valueHum}>Umidade: {item.hum}%</Text>
+                </View>
+
+                <View style={styles.row}>
+                    <Icon
+                        name={item.light === '1' ? 'lightbulb-on' : 'lightbulb-off'}
+                        size={16}
+                        color={item.light === '1' ? '#FFD93D' : '#888'}
+                    />
+                    <Text style={item.light === '1' ? styles.valueLightOn : styles.valueLightOff}>
+                        Luz: {item.light === '1' ? 'Ligada' : 'Desligada'}
+                    </Text>
+                </View>
+            </View>
+        );
+    };
 
     return (
-        <Modal visible={visible} onRequestClose={onClose} animationType="slide" transparent={true}>
-            <TouchableOpacity style={styles.overlay} onPress={onClose} activeOpacity={1}>
-                <TouchableOpacity style={styles.sheet} activeOpacity={1}>
-
-                    <View style={styles.handle} />
+        <Modal visible={visible} onRequestClose={onClose} transparent={true}>
+            <View style={styles.overlay}>
+                <TouchableOpacity style={styles.overlayClose} onPress={onClose} activeOpacity={1} />
+                <Animated.View style={[styles.sheet, { transform: [{ translateY }] }]}>
+                    <View {...panResponder.panHandlers}>
+                        <View style={styles.handle} />
+                    </View>
 
                     <View style={styles.header}>
-                        <Text style={styles.headerText}>Leitura Atual</Text>
+                        <Text style={styles.headerText}>
+                            Histórico{history.length > 0 ? ` (${history.length})` : ''}
+                        </Text>
                         <TouchableOpacity onPress={onClose}>
                             <Icon name="close" size={24} color="#FFF" />
                         </TouchableOpacity>
                     </View>
 
-                    {!hasData ? (
+                    {history.length === 0 ? (
                         <Text style={styles.emptyText}>Nenhum dado disponível.</Text>
                     ) : (
-                        <View style={styles.card}>
-                            {timestamp && (
-                                <View style={styles.row}>
-                                    <Icon name="clock-outline" size={18} color="#888" />
-                                    <Text style={styles.timestamp}>
-                                        {timestamp.toLocaleString('pt-BR')}
-                                    </Text>
-                                </View>
-                            )}
-                            <View style={styles.row}>
-                                <Icon name="thermometer" size={18} color="#FF6B6B" />
-                                <Text style={styles.valueTemp}>Temperatura: {temp}°C</Text>
-                            </View>
-                            <View style={styles.row}>
-                                <Icon name="water-percent" size={18} color="#4ECDC4" />
-                                <Text style={styles.valueHum}>Umidade: {hum}%</Text>
-                            </View>
-                            <View style={styles.row}>
-                                <Icon
-                                    name={light === '1' ? 'lightbulb-on' : 'lightbulb-off'}
-                                    size={18}
-                                    color={light === '1' ? '#FFD93D' : '#888'}
-                                />
-                                <Text style={light === '1' ? styles.valueLightOn : styles.valueLightOff}>
-                                    Luz: {light === '1' ? 'Ligada' : 'Desligada'}
-                                </Text>
-                            </View>
-                        </View>
+                        <FlatList
+                            data={history}
+                            extraData={history}
+                            keyExtractor={(item) => item.timestamp}
+                            renderItem={renderItem}
+                            showsVerticalScrollIndicator={false}
+                            contentContainerStyle={styles.listContent}
+                            style={styles.list}
+                        />
                     )}
-
-                </TouchableOpacity>
-            </TouchableOpacity>
+                </Animated.View>
+            </View>
         </Modal>
     );
 };

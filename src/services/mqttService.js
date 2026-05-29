@@ -1,8 +1,8 @@
 import init from 'react_native_mqtt';
-import { AsyncStorage } from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 init({
-    size:10000,
+    size: 10000,
     storageBackend: AsyncStorage,
     defaultExpires: 1000 * 3600 * 24,
     enableCached: true,
@@ -10,11 +10,11 @@ init({
 });
 
 export default class MQTTService {
-    constructor(){
+    constructor() {
         this.client = null;
     }
     connect(config, onMessage, onConnect, onFailure) {
-        const {host, port, path, user, pass, clientId } = config;
+        const { host, port, path, user, pass, clientId } = config;
 
         this.client = new Paho.MQTT.Client(host, port, path, clientId);
 
@@ -35,7 +35,7 @@ export default class MQTTService {
         this.client.connect(options);
     };
 
-    subscribe(topic){
+    subscribe(topic) {
         this.client.subscribe(topic);
     }
 
