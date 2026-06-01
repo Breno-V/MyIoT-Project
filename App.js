@@ -95,6 +95,8 @@ export default function App() {
           lastTempRef.current = value;
           setTemp(value);
           setLastTimestamp(now);
+          AsyncStorage.setItem('temp', lastTempRef.current); //adicionado após menção B
+          AsyncStorage.setItem('timestamp', now.toISOString()); //adicionado após menção B
         }
 
         if (topic === 'casa/hum') {
@@ -102,12 +104,16 @@ export default function App() {
           lastHumRef.current = value;
           setHum(value);
           setLastTimestamp(now);
+          AsyncStorage.setItem('hum', lastHumRef.current); //adicionado após menção B
+          AsyncStorage.setItem('timestamp', now.toISOString()); //adicionado após menção B
         }
 
         if (topic === 'casa/luz') {
           lastLightRef.current = message;
           setIsLightOn(message === '1');
           setLastTimestamp(now);
+          AsyncStorage.setItem('light', lastLightRef.current); //adicionado após menção B
+          AsyncStorage.setItem('timestamp', now.toISOString()); //adicionado após menção B
         }
 
         if (lastTempRef.current !== null || lastHumRef.current !== null || lastLightRef.current !== null) {
