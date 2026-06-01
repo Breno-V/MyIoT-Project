@@ -24,7 +24,7 @@ No aplicativo, a comunicação foi implementada com a biblioteca **MQTT** conect
 
 <div align="center">
   <!-- Substitua pelo link do seu vídeo/GIF após gravar -->
-  <video src="SUA_DEMONSTRACAO_AQUI" controls width="300"/>
+  <video src="https://github.com/user-attachments/assets/ade245f2-02ef-4b33-848e-e2a69b0859ac" controls width="300"/>
 </div>
 
 ## 📂 Estrutura de Pastas do Projeto
