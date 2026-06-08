@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         with: '48%',
         borderRadius: 20,
+        marginBottom: 120,
     },
     label: {
         color: '#AAA',
