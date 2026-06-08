@@ -111,7 +111,7 @@ export const HistoryModal = ({ visible, onClose, history = [] }) => {
                         <FlatList
                             data={history}
                             extraData={history}
-                            keyExtractor={(item) => item.timestamp}
+                            keyExtractor={(item) => item.id}
                             renderItem={renderItem}
                             showsVerticalScrollIndicator={false}
                             contentContainerStyle={styles.listContent}
