@@ -22,10 +22,13 @@ No aplicativo, a comunicação foi implementada com a biblioteca **MQTT** conect
 
 ## 🎖️ Demonstração
 
+### Aplicativo Antes da implementação do DashBoard
 <div align="center">
   <!-- Substitua pelo link do seu vídeo/GIF após gravar -->
   <video src="https://github.com/user-attachments/assets/ade245f2-02ef-4b33-848e-e2a69b0859ac" controls width="300"/>
 </div>
+
+### Aplicativo Após a implementação do DashBoard
 
 ## 📂 Estrutura de Pastas do Projeto
 
@@ -58,6 +61,20 @@ MyIot-Project/
 ├── package.json
 └── README.md
 ```
+## 📊 Dashboard de Análise
+
+### Objetivo
+O Dashboard foi desenvolvido para oferecer uma visão analítica dos dados históricos coletados dos sensores, permitindo acompanhar a média de tempo e a quantidade de uso/ativação de umidade, temperatura e luz ao longo do tempo.
+
+### Funcionalidades
+- **Tempo da Luz (PieChart):** Exibe a proporção de tempo que a luz permaneceu ligada (Ativo) vs desligada (Inativo) durante o período monitorado.
+- **Variação da Temperatura (LineChart):** Gráfico de linhas com as últimas 6 leituras de temperatura (°C), mostrando a evolução ao longo do tempo.
+- **Variação da Umidade (LineChart):** Gráfico de linhas com as últimas 6 leituras de umidade (%), mostrando a evolução ao longo do tempo.
+
+### Tecnologias Utilizadas
+- **react-native-chart-kit** — renderização dos gráficos PieChart e LineChart
+- **react-native-svg** — suporte a renderização SVG necessária para os gráficos
+
 ## ❔ Como Executar o Projeto
 
 Siga os passos abaixo para configurar e executar o projeto localmente em seu dispositivo móvel.
