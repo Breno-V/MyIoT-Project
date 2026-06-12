@@ -24,11 +24,11 @@ No aplicativo, a comunicação foi implementada com a biblioteca **MQTT** conect
 
 ### Aplicativo Antes da implementação do DashBoard
 <div align="center">
-  <!-- Substitua pelo link do seu vídeo/GIF após gravar -->
   <video src="https://github.com/user-attachments/assets/ade245f2-02ef-4b33-848e-e2a69b0859ac" controls width="300"/>
 </div>
-
+            
 ### Aplicativo Após a implementação do DashBoard
+[▶️ Assistir demonstração](https://youtu.be/Fb07BmOoYjg)
 
 ## 📂 Estrutura de Pastas do Projeto
 
